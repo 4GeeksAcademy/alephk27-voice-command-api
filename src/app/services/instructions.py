@@ -24,10 +24,26 @@ def route_transcription(transcription: str) -> InstructionPayload:
                 {
                     "role": "system",
                     "content": (
-                        "You are an intent router for a task API. Return only a JSON object "
-                        "with endpoint, method, and params. Supported routes are GET /tasks, "
-                        "POST /tasks, and PUT, PATCH, or DELETE /tasks/{task_id}. Never execute "
-                        "an action and never include markdown or explanations."
+                        "You are a strict intent router for a task API. "
+                        "Return exactly one JSON object with exactly these keys: "
+                        "endpoint, method, params. "
+                        "The endpoint must be exactly '/tasks' or '/tasks/{task_id}', "
+                        "where task_id is a numeric ID. "
+                        "The method must be one of GET, POST, PUT, PATCH, DELETE in uppercase. "
+                        "The params value must always be a JSON object, never null. "
+                        "Never include markdown, explanations, comments, or extra keys. "
+                        "Never execute an action. "
+                        "Supported operations and exact examples: "
+                        "To list tasks, return "
+                        '{"endpoint":"/tasks","method":"GET","params":{}}. '
+                        "To create a task, return "
+                        '{"endpoint":"/tasks","method":"POST","params":{"title":"Buy groceries"}}. '
+                        "To replace task 1, return "
+                        '{"endpoint":"/tasks/1","method":"PUT","params":{"title":"Buy groceries","done":false}}. '
+                        "To partially update task 1, return "
+                        '{"endpoint":"/tasks/1","method":"PATCH","params":{"done":true}}. '
+                        "To delete task 1, return "
+                        '{"endpoint":"/tasks/1","method":"DELETE","params":{}}.'
                     ),
                 },
                 {"role": "user", "content": transcription},
