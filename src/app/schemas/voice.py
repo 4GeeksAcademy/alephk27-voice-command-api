@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -30,7 +30,7 @@ class InstructionRequest(BaseModel):
 
 class InstructionPayload(BaseModel):
     endpoint: str = Field(..., min_length=1)
-    method: str = Field(..., min_length=1)
+    method: Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
     params: dict[str, Any] = Field(default_factory=dict)
 
 

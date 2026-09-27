@@ -61,6 +61,9 @@ def route_transcription(transcription: str) -> InstructionPayload:
             detail="Instruction model returned an invalid routing object.",
         )
 
+    if isinstance(raw.get("method"), str):
+        raw["method"] = raw["method"].upper()
+
     try:
         instruction = InstructionPayload.model_validate(raw)
     except Exception as exc:

@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     allowed_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"]
     )
+    # GitHub Codespaces exposes the frontend and API through dynamic
+    # `*.app.github.dev` hosts, so a static origin list is not sufficient.
+    allowed_origin_regex: str = r"^https://[a-z0-9-]+\.app\.github\.dev$"
 
     model_config = SettingsConfigDict(
         env_file=".env",
