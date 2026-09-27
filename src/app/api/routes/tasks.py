@@ -1,19 +1,19 @@
 from fastapi import APIRouter, HTTPException, status
 
 from src.app.schemas.voice import Task, TaskCreate, TaskReplace, TaskUpdate
+from src.app.services import tasks
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
 @router.get("", response_model=list[Task])
 def get_tasks() -> list[Task]:
-    raise_not_implemented("GET /tasks")
+    return tasks.list_tasks()
 
 
 @router.post("", response_model=Task, status_code=status.HTTP_201_CREATED)
 def create_task(payload: TaskCreate) -> Task:
-    _ = payload
-    raise_not_implemented("POST /tasks")
+    return tasks.create_task(payload)
 
 
 @router.put("/{task_id}", response_model=Task)
@@ -21,8 +21,10 @@ def replace_task(
     task_id: int,
     payload: TaskReplace,
 ) -> Task:
-    _ = (task_id, payload)
-    raise_not_implemented("PUT /tasks/{task_id}")
+    try:
+        return tasks.replace_task(task_id, payload)
+    except KeyError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Task {task_id} not found.") from exc
 
 
 @router.patch("/{task_id}", response_model=Task)
@@ -30,18 +32,16 @@ def update_task(
     task_id: int,
     payload: TaskUpdate,
 ) -> Task:
-    _ = (task_id, payload)
-    raise_not_implemented("PATCH /tasks/{task_id}")
+    try:
+        return tasks.update_task(task_id, payload)
+    except KeyError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Task {task_id} not found.") from exc
 
 
-@router.delete("/{task_id}")
-def delete_task(task_id: int) -> dict[str, str]:
-    _ = task_id
-    raise_not_implemented("DELETE /tasks/{task_id}")
-
-
-def raise_not_implemented(endpoint: str) -> None:
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail=f"Template endpoint pending implementation: {endpoint}",
-    )
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int) -> None:
+    try:
+        tasks.delete_task(task_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Task {task_id} not found.") from exc
+    return None
