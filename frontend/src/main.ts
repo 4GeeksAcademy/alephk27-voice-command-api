@@ -521,7 +521,7 @@ function normalizeBaseUrl(value: string): string {
   const trimmed = value.trim()
 
   if (!trimmed) {
-    throw new Error('Missing VITE_API_BASE_URL. Add it to frontend/.env.')
+    return ''
   }
 
   return trimmed.replace(/\/+$/, '')

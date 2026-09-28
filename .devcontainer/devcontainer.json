@@ -17,5 +17,13 @@
     }
   },
   "forwardPorts": [8000, 5173],
+  "portsAttributes": {
+    "8000": {
+      "visibility": "public"
+    },
+    "5173": {
+      "visibility": "public"
+    }
+  },
   "postCreateCommand": "python -m pip install --upgrade pip uv && uv sync && cd frontend && npm install"
 }
